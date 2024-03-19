@@ -1,0 +1,70 @@
+{% extends 'base.html' %}
+
+{% block title %}
+<title>Inventory Managment App</title>
+{% endblock %}
+
+
+{% block content %}
+<main>
+    <div class="container-fluid">
+        <h1 class="mt-4">Dashboard</h1>
+        <ol class="breadcrumb mb-4">
+            <li class="breadcrumb-item"><a href="/">Dashboard</a></li>
+            <li class="breadcrumb-item active">Outwards </li>
+        </ol>
+        <div class="card mb-4">
+            <div class="card-header">Outwards</div>
+            <div class="card-body">
+                <div class="card mb-4">
+                    <div class="card-header">New Outwards</div>
+                    <div class="card-body">
+                        <form action="/sales/" method="POST" id="sales_form">
+                            <label for="sales_id" class="col-form-label">Sales Name</label>
+                            <input type="text" name="sales_id" id="sales_id">
+
+                            <input id="submitSales" value="Add " class="btn btn-primary">
+                        </form>
+                    </div>
+                </div>
+                <div class="card mb-4">
+                <div class="card-header">
+                    <i class="fas fa-table mr-1"></i>
+                    Sales Table
+                </div>
+                <div class="card-body">
+                    <div class="table-responsive">
+                        {% if sales|length < 1 %}
+                        <h4>There are no names, add one above</h4>
+                        {% else %}
+                        <table class="table table-bordered" id="dataTable" width="100%" cellspacing="0">
+                            <thead>
+                                <tr>
+                                    <th>Name</th>
+                                    <th>Date</th>
+                                </tr>
+                            </thead>
+                            <tfoot>
+
+                            </tfoot>
+                            <tbody>
+                                {% for location in sales %}
+                                <tr>
+                                    <td>{{ location.sales_id }}</td>
+                                    <td>{{ location.date_created.date() }}</td>
+
+
+                                    </td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                        {% endif %}
+                </div>
+            </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</main>
+{% endblock %}

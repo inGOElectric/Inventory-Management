@@ -1,0 +1,242 @@
+{% extends 'base.html' %}
+
+{% block title %}
+<title>Inventory Managment App</title>
+{% endblock %}
+
+{% block content %}
+<main>
+        <style>
+  thead {
+    background-color: #337ab7;
+  }
+</style>
+<script>
+// Function to update the "From Location" dropdown options based on the selected product ID
+function updateLocations(productId) {
+    $.ajax({
+        type: "GET",
+        url: "/get_locations/" + productId,
+        dataType: "json",
+        success: function (data) {
+            var uniqueLocations = new Set();
+            data.forEach(function (location) {
+                uniqueLocations.add(location.location_id);
+            });
+
+            var select = $("<select>").addClass("form-control").attr("id", "fromLocation").attr("name", "fromLocation").prop("required", true);
+            var placeholderOption = $("<option>").attr("value", "").text("Select Location");
+            select.append(placeholderOption);
+
+            uniqueLocations.forEach(function (locationId) {
+                var option = $("<option>").attr("value", locationId).text(locationId);
+                select.append(option);
+            });
+
+            $("#location-container").empty().append($("<div>").addClass("form-group").append($("<label>").attr("for", "fromLocation").text("From Location:")).append(select));
+        }
+    });
+}
+
+// Display the "From Location" dropdown with the placeholder option on page load
+$(document).ready(function () {
+    var select = $("<select>").addClass("form-control").attr("id", "fromLocation").attr("name", "fromLocation").prop("required", true);
+    var placeholderOption = $("<option>").attr("value", "").text("Select Location");
+    select.append(placeholderOption);
+    $("#location-container").empty().append($("<div>").addClass("form-group").append($("<label>").attr("for", "fromLocation").text("From Location:")).append(select));
+});
+
+// Attach event listener to the "Product ID" input field to update the "From Location" dropdown options
+$(document).on("input", "#productId", function () {
+    var productId = $(this).val();
+    if (productId) {
+        updateLocations(productId);
+    } else {
+        var select = $("<select>").addClass("form-control").attr("id", "fromLocation").attr("name", "fromLocation").prop("required", true);
+        var placeholderOption = $("<option>").attr("value", "").text("Select Location");
+        select.append(placeholderOption);
+        $("#location-container").empty().append($("<div>").addClass("form-group").append($("<label>").attr("for", "fromLocation").text("From Location:")).append(select));
+    }
+});
+</script>
+
+
+    <div class="container-fluid">
+        <h1 class="mt-4">Dashboard</h1>
+        <ol class="breadcrumb mb-4">
+            <li class="breadcrumb-item"><a href="/">Dashboard</a></li>
+            <li class="breadcrumb-item active">Movements</li>
+        </ol>
+        <div class="card mb-4">
+            <div class="card-header">Movements</div>
+            <div class="card-body">
+                <div class="card mb-4">
+
+                    <div class="card-header">New Movement</div>
+                    <div class="card-body">
+                        <form action="/movements/" method="POST" id="movements_from">
+                            <div class="form-row">
+                                .
+                                <div class="col-md-4">
+                                    <div class="form-group">
+                                            <label for="selection">Select entry type:</label>
+    <select id="selection" name="selection">
+        <option value="inwarding">Inwarding</option>
+        <option value="movements">Movements</option>
+    </select>
+                                        <label for="productId">Part Name</label>
+                                        <select id="productId" name="productId" class="form-control">
+                                            <option selected value="">Choose...</option>
+                                           {% set added_product_ids = [] %}
+                                            {% for product in inwarding %}
+                                            {% if product.productId not in added_product_ids %}
+                                            <option value="{{product.productId}}">{{product.productId}}</option>
+                                            {% set _ = added_product_ids.append(product.productId) %}
+                                            {% endif %}
+                                            {% endfor %}
+                                        </select>
+                                    </div>
+                                </div>
+                                <div class="col-md-4">
+                                    <div class="form-group">
+                                        <label for="part_id">Part number</label>
+                                        <input class="form-control" name="part_id" id="part_id" type="text"  />
+                                    </div>
+                                </div>
+                                                                <div class="col-md-4">
+                                    <div class="form-group">
+                                        <label for="area">Area</label>
+                                        <input class="form-control" name="area" id="area" type="number"  />
+                                    </div>
+                                </div>
+
+                                <div class="col-md-4">
+                                    <div class="form-group">
+                                        <label for="quantity">quantity</label>
+                                        <input class="form-control" name="quantity" id="quantity" type="number" placeholder="Enter Quantity" />
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="form-row">
+
+                            <div class="col-md-6">
+                                    <div class="form-group">
+                                        <label for="operationperson_id">Operations Person</label>
+                                        <select id="operationperson_id" name="operationperson_id" class="form-control">
+                                            <option selected value="">Choose...</option>
+                                           {% set added_person_ids = [] %}
+                                            {% for product in inwarding %}
+                                            {% if product.operationperson_id not in added_person_ids %}
+                                            <option value="{{product.operationperson_id}}">{{product.operationperson_id}}</option>
+                                            {% set _ = added_person_ids.append(product.operationperson_id) %}
+                                            {% endif %}
+                                            {% endfor %}
+                                        </select>
+                                    </div>
+                                </div>
+                            <div class="col-md-6">
+                                    <div class="form-group">
+                                        <label for="operationperson_phn">Operations Person Phonenumber</label>
+                                        <input class="form-control" name="operationperson_phn" id="operationperson_phn" type="text" />
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="form-row">
+                                <div class="col-md-6">
+                                    <div id="location-container"></div>
+                                    </div>
+
+
+                                <div class="col-md-6">
+                                    <label for="toLocation">TO</label>
+                               <select id="toLocation" name="toLocation" class="form-control">
+    <option selected value="">Choose...</option>
+    {% set added_location_ids = [] %}
+    {% for location in locations %}
+        {% if location.location_id not in added_location_ids %}
+            <option value="{{ location.location_id }}">{{ location.location_id }}</option>
+            {% set _ = added_location_ids.append(location.location_id) %}
+        {% endif %}
+    {% endfor %}
+                               </select>
+                                </div>
+                            </div>
+                            <div class="form-group mt-4 mb-0">
+                                <input type="submit" class="btn btn-primary btn-block" value="Add Movement" class="btn btn-primary">
+                            </div>
+
+
+                        </form>
+
+                    </div>
+                </div>
+                <div class="card mb-4">
+                <div class="card-header">
+                    <i class="fas fa-table mr-1"></i>
+                    Movements Table
+                </div>
+                <div class="card-body">
+                    <div class="table-responsive">
+                        {% if movements|length < 1 %}
+                        <h4>There are no Movements, add one above</h4>
+                        {% else %}
+                        <table class="table table-bordered" id="dataTable" width="100%" cellspacing="0">
+                            <thead>
+                                <tr>
+                                    <th>ID</th>
+                                    <th>Part Name</th>
+                                    <th>Part Number</th>
+                                    <th>Area/unit</th>
+                                    <th>Quantity</th>
+                                    <th>Operation Person</th>
+                                    <th>Phonenumber</th>
+                                    <th>From</th>
+                                    <th>To</th>
+                                    <th>Time</th>
+                                    <th>Actions</th>
+
+                                </tr>
+                            </thead>
+                            <tfoot>
+                            </tfoot>
+                            <tbody>
+                                {% for movement in movements%}
+                                <tr>
+                                    <td>{{ movement.movement_id }}</td>
+                                    <td>{{ movement.productId }}</td>
+                                    <td>{{ movement.part_id }}</td>
+                                    <td>{{ movement.area}}</td>
+                                    <td>{{ movement.quantity }}</td>
+                                    <td>{{ movement.operationperson_id }}</td>
+                                    <td>{{ movement.operationperson_phn }}</td>
+                                    <td>{{ movement.from_location }}</td>
+                                    <td>{{ movement.to_location }}</td>
+                                    <td>{{movement.movement_time}}</td>
+                                                          <td>
+<a href="/delete-movement/{{ movement.movement_id }}" onclick="return confirmDelete();" class="btn btn-default btn-sm" style="background-color:#d0e1e1
+;color:red;font-size: 1.20em;">
+          <span class="glyphicon glyphicon-trash"></span></a>
+        <script>
+function confirmDelete() {
+    if (confirm("Are you sure you want to delete this product?")) {
+        return true;
+    } else {
+        return false;
+    }
+}
+</script>
+</td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                        {% endif %}
+                </div>
+            </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</main>
+{% endblock %}

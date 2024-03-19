@@ -1,0 +1,269 @@
+{% extends 'base.html' %}
+
+{% block title %}
+<title>Inventory Managmnet App</title>
+{% endblock %}
+{% block content %}
+<main>
+        <style>
+  thead {
+    background-color: #337ab7;
+  }
+</style>
+    <div class="container-fluid">
+        <h1 class="mt-4">Dashboard</h1>
+        <ol class="breadcrumb mb-4">
+            <li class="breadcrumb-item"><a href="/">Dashboard</a></li>
+            <li class="breadcrumb-item active">Inwarding</li>
+        </ol>
+        <div class="card mb-4">
+            <div class="card-header">Inwarding</div>
+            <div class="card-body">
+                <div class="card mb-4">
+                    <div class="card-header">New Inward</div>
+                    <div class="card-body">
+                        <form action="/inwarding/" method="POST" id="inward_from">
+                         <label for="productId"><strong><big>Enter Part details:</big></strong></label><br>
+                            <div class="form-row">
+                                <div class="col-md-3">
+                                    <div class="form-group">
+                                        <label for="productId">Part Name</label>
+                                        <select id="productId" class="form-control" name="productId" oninput="getProductDetails()">
+                                       <option selected value="">Choose</option>
+                                        {% if products|length > 0 %}
+                                            {% for product in products%}
+                                            <option value="{{product.productId}}">{{product.productId}}</option>
+                                           {% endfor %}
+                                            {% endif %}
+                                         </select>
+                                    </div>
+                                </div>
+                                <div class="col-md-3">
+                                    <div class="form-group">
+                                        <label for="part_id">Part Number</label>
+                                        <input class="form-control" name="part_id" id="part_id" type="text"  />
+                                    </div>
+                                </div>
+                                <div class="col-md-3">
+                                    <div class="form-group">
+                                        <label for="area">Area/Unit</label>
+                                        <input class="form-control" name="area" id="area" type="number"  />
+                                    </div>
+                                </div>
+
+
+                            <div class="col-md-3">
+                                    <div class="form-group">
+                                        <label for="cost">Cost/Unit</label>
+                                        <input class="form-control" name="cost" id="cost" step=0.01 type="number" placeholder="Enter Cost" />
+                                    </div>
+                                </div>
+                            <div class="col-md-3">
+                                    <div class="form-group">
+                                        <label for="quantity">Quantity</label>
+                                        <input class="form-control" name="quantity" id="quantity" type="number" placeholder="Enter Quantity" />
+                                    </div>
+                                </div>
+                            </div>
+                            <label for="vendor_id"><strong><big>Enter vendor details:</big></strong></label><br>
+
+                            <div class="form-row">
+                                <div class="col-md-3">
+                                    <div class="form-group">
+                                    <label for="vendor_id">Vendor Name</label>
+                                    <select id="vendor_id" class="form-control" name="vendor_id" oninput="getVendorDetails()">
+                                        <option selected value="">Choose</option>
+                                        {% if vendors|length > 0 %}
+                                        {% for vendor in vendors%}
+                                        <option value="{{vendor.vendor_id}}">{{vendor.vendor_id}}</option>
+                                        {% endfor %}
+                                        {% endif %}
+                                    </select>
+                                </div>
+                                    </div>
+                                <div class="col-md-3">
+                                    <div class="form-group">
+                                    <label for="vendor_address">Vender Address</label>
+                                        <input class="form-control" name="vendor_address" id="vendor_address" type="text" />
+
+                                </div>
+                            </div>
+                            <div class="col-md-3">
+                                   <div class="form-group">
+
+                                    <label for="vendor_phn">Phone Number</label>
+                                        <input class="form-control" name="vendor_phn" id="vendor_phn" type="number" />
+
+                                </div>
+                            </div>
+                            </div>
+                            <label for="operationperson_id"><strong><big>Enter Operations Person Details:</big></strong></label><br>
+
+                            <div class="form-row">
+                                <div class="col-md-3">
+                                    <div class="form-group">
+                                    <label for="operationperson_id">Operations Person</label>
+                                    <select id="operationperson_id" class="form-control" name="operationperson_id" oninput="getOperationPersonDetails()" >
+
+                                        <option selected value="">Choose</option>
+                                        {% if persons|length > 0 %}
+                                        {% for person in persons%}
+                                        <option value="{{person.operationperson_id}}">{{person.operationperson_id}}</option>
+                                        {% endfor %}
+                                        {% endif %}
+                                    </select>
+                                </div>
+                                    </div>
+                                <div class="col-md-3">
+                                    <div class="form-group">
+                                    <label for="operationperson_phn">Phone Number</label>
+                                        <input class="form-control" name="operationperson_phn" id="operationperson_phn" type="number" />
+
+                                </div>
+                            </div>
+                            </div>
+                            <label for="location_id"><strong><big>Enter location details:</big></strong></label><br>
+
+                            <div class="form-row">
+                                <div class="col-md-3">
+                                    <div class="form-group">
+                                    <label for="location_id">Location</label>
+                                    <select id="location_id" class="form-control" name="location_id" oninput="getLocationdetails()">
+                                         <option selected value="">Choose</option>
+
+                                        {% if locations|length > 0 %}
+                                        {% for location in locations%}
+                                        <option value="{{location.location_id}}">{{location.location_id}}</option>
+                                        {% endfor %}
+                                        {% endif %}
+                                    </select>
+                                </div>
+                                    </div>
+                                                                <div class="col-md-3">
+                                    <div class="form-group">
+                                    <label for="location_area">Area in sqft</label>
+                                        <input class="form-control" name="location_area" id="location_area" type="number" />
+
+                                </div>
+                            </div>
+                                </div>
+
+                            <div class="form-group mt-4 mb-0">
+                                <input type="submit" class="btn btn-primary btn-block" value="Add Meterials" class="btn btn-primary">
+                            </div>
+                        </form>
+                    </div>
+                </div>
+                <div class="card mb-4">
+                <div class="card-header">
+                    <i class="fas fa-table mr-1"></i>
+                    Movements Table
+                </div>
+                <div class="card-body">
+                    <div class="table-responsive">
+                        {% if inwards|length < 1 %}
+                        <h4>There are no meterials, add one above</h4>
+                        {% else %}
+                        <table class="table table-bordered" id="dataTable" width="100%" cellspacing="0">
+    <thead>
+        <tr>
+            <th>ID</th>
+            <th>Part Name</th>
+            <th>Part Number</th>
+            <th>Area/Unit</th>
+            <th>Cost/Unit</th>
+            <th>Quantity</th>
+            <th>Initial Quantity</th>
+            <th>Area</th>
+            <th>Cost</th>
+            <th>Vendor Name</th>
+            <th>Vendor Address</th>
+            <th>Vendor Phonenumber</th>
+            <th>Operations Person</th>
+            <th>Phonenumber</th>
+            <th>Location</th>
+            <th>Location Area</th>
+            <th> Date</th>
+            <th>Actions</th>
+        </tr>
+    </thead>
+<tbody>
+    {% set total_cost = 0 %}
+    {% for inward in inwards %}
+        <tr>
+            <td>{{ inward.inwarding_id }}</td>
+            <td>{{ inward.productId }}</td>
+            <td>{{ inward.part_id }}</td>
+            <td>{{ inward.area }}</td>
+            <td>{{ '{:,.2f}'.format(inward.cost) }} &#x20b9;</td>
+            <td>{{ inward.quantity }}</td>
+            <td>{{ inward.quantity1 }}</td>
+            <td>{{ inward.Tarea }}</td>
+            <td>{{ '{:,.2f}'.format(inward.Tcost) }} &#x20b9;</td>
+            <td>{{ inward.vendor_id }}</td>
+            <td>{{ inward.vendor_address }}</td>
+            <td>{{ inward.vendor_phn }}</td>
+            <td>{{ inward.operationperson_id }}</td>
+            <td>{{ inward.operationperson_phn }}</td>
+            <td>{{ inward.location_id }}</td>
+            <td>{{ inward.location_area }}</td>
+            <td>{{inward.inwarding_time }}</td>
+                      <td>
+<a href="/delete-inward/{{ inward.inwarding_id }}" onclick="return confirmDelete();" class="btn btn-default btn-sm" style="background-color:#d0e1e1
+;color:red;font-size: 1.20em;">
+          <span class="glyphicon glyphicon-trash"></span></a>
+        <script>
+function confirmDelete() {
+    if (confirm("Are you sure you want to delete this product?")) {
+        return true;
+    } else {
+        return false;
+    }
+}
+</script>
+</td>
+        </tr>
+        {% set total_cost = total_cost + (inward.cost * inward.quantity1) %}
+    {% endfor %}
+    <tr>
+        <td>total</td>
+        <td></td>
+        <td></td>
+        <td></td>
+        <td></td>
+        <td></td>
+                <td></td>
+
+                <td><strong>Total Cost</strong></td>
+        <td id="total-cost" >{{ '{:,.2f}'.format(total_cost) }} &#x20b9;</td>
+        <td></td>
+        <td></td>
+        <td></td>
+        <td></td>
+                <td></td>
+                <td></td>
+                        <td></td>
+                        <td></td>
+                                <td></td>
+    </tr>
+</tbody>
+ </table>
+{% endif %}
+                        </div>
+                        </div>
+                    </div>
+            </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <script>
+  var totalCost = 0;
+  {% for inward in inwards %}
+    totalCost += {{ inward.cost * inward.quantity1}};
+  {% endfor %}
+  document.getElementById("total-cost").innerHTML =  totalCost.toFixed(2)+'₹ ' ;
+</script>
+
+</main>
+{% endblock %}

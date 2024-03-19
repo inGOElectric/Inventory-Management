@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>Summary Report</title>
+	<!DOCTYPE html>
+
+	<title>My Table</title>
+
+	{{ html_table }}
+</body>
+</html>
+
+	<style>
+		table, th, td {
+			border: 1px solid black;
+			border-collapse: collapse;
+			padding: 5px;
+			text-align: center;
+		}
+	</style>
+</head>
+<body>
+	<h1>Summary Report</h1>
+	<h2>Inwards</h2>
+	<table>
+		<thead>
+			<tr>
+				<th> Type</th>
+				<th>Inwarding ID</th>
+				<th>Product ID</th>
+				<th>Part ID</th>
+				<th>Quantity</th>
+				<th>Location ID</th>
+				<th>Operation Person ID</th>
+				<th>Operation Person Phone</th>
+                <th>Inwarding Time</th>
+
+
+
+			</tr>
+		</thead>
+		<tbody>
+			{% for inward in inwards %}
+			<tr>
+				<td>{{inward.type }}</td>
+				<td>{{ inward.inwarding_id }}</td>
+				<td>{{ inward.productId }}</td>
+				<td>{{ inward.part_id }}</td>
+				<td>{{ inward.quantity }}</td>
+				<td>{{ inward.location_id }}</td>
+				<td>{{ inward.operationperson_id }}</td>
+				<td>{{ inward.operationperson_phn }}</td>
+                <td>{{inward.inwarding_time }}</td>
+
+			</tr>
+			{% endfor %}
+		</tbody>
+	</table>
+
+	<h2>Movements</h2>
+	<table>
+		<thead>
+			<tr>
+				<th> Type</th>
+				<th>Movement ID</th>
+				<th>Product ID</th>
+				<th>Part ID</th>
+				<th>Quantity</th>
+				<th>From Location</th>
+				<th>To Location</th>
+				<th>Operation Person ID</th>
+				<th>Operation Person Phone</th>
+				<th>Movement Time</th>
+			</tr>
+		</thead>
+		<tbody>
+			{% for mov in movements %}
+			<tr>
+				<td>{{mov.type }}</td>
+				<td>{{ mov.movement_id }}</td>
+				<td>{{ mov.productId }}</td>
+				<td>{{ mov.part_id }}</td>
+				<td>{{ mov.quantity }}</td>
+				<td>{{ mov.from_location }}</td>
+				<td>{{ mov.to_location }}</td>
+				<td>{{ mov.operationperson_id }}</td>
+				<td>{{ mov.operationperson_phn }}</td>
+				<td>{{ mov.movement_time }}</td>
+			</tr>
+			{% endfor %}
+		</tbody>
+	</table>
+	<h2>Outwards</h2>
+	<table>
+		<thead>
+			<tr>
+				<th>Type</th>
+				<th>Outward ID</th>
+				<th>Product ID</th>
+				<th>Part ID</th>
+				<th>Quantity</th>
+				<th>From Location</th>
+				<th>To Location</th>
+				<th>Operation Person ID</th>
+				<th>Operation Person Phone</th>
+				<th>Movement Time</th>
+			</tr>
+		</thead>
+		<tbody>
+                                {% for movement in Outwards%}
+			<tr>
+				                     <td>{{movement.type }}</td>
+                                    <td>{{ movement.outward_id }}</td>
+                                    <td>{{ movement.productId }}</td>
+                                    <td>{{ movement.part_id }}</td>
+                                    <td>{{ movement.quantity }}</td>
+				                     <td>{{ movement.to_location }}</td>
+                                    <td>{{movement.sales_id}}</td>
+                                    <td>{{ movement.operationperson_id }}</td>
+                                    <td>{{ movement.operationperson_phn }}</td>
+
+                                    <td>{{movement.outward_time}}</td>
+			</tr>
+			{% endfor %}
+		</tbody>
+	</table>
+</body>
+</html>

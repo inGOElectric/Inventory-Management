@@ -1,0 +1,159 @@
+{% extends 'base.html' %}
+
+{% block title %}
+<title>Inventory Managmnet App</title>
+{% endblock %}
+{% block content %}
+<main>
+        <style>
+  thead {
+    background-color: #337ab7;
+  }
+</style>
+    <div class="container-fluid">
+        <h1 class="mt-4">Dashboard</h1>
+        <ol class="breadcrumb mb-4">
+            <li class="breadcrumb-item"><a href="/">Dashboard</a></li>
+            <li class="breadcrumb-item active">Inwarding</li>
+        </ol>
+        <div class="card mb-4">
+            <div class="card-header">Update Inwarding</div>
+            <div class="card-body">
+                <div class="card mb-4">
+                    <div class="card-header">New Inward</div>
+                    <div class="card-body">
+                        <form action="/update-inward/{{inward.inwarding_id}}" method="POST" id="inward_from">
+                         <label for="productId"><strong><big>Enter Part details:</big></strong></label><br>
+                            <div class="form-row">
+                                <div class="col-md-3">
+                                    <div class="form-group">
+                                        <label for="productId">Part Name</label>
+                                        <select id="productId" class="form-control" name="productId" oninput="getProductDetails()" value="{{inward.productId}}">
+                                       <option selected value="">Choose</option>
+                                        {% if products|length > 0 %}
+                                            {% for product in products%}
+                                            <option value="{{product.productId}}">{{product.productId}}</option>
+                                           {% endfor %}
+                                            {% endif %}
+                                         </select>
+                                    </div>
+                                </div>
+                                <div class="col-md-3">
+                                    <div class="form-group">
+                                        <label for="part_id">Part Number</label>
+                                        <input class="form-control" name="part_id" id="part_id" type="text" value="{{inward.part_id}}" />
+                                    </div>
+                                </div>
+                                <div class="col-md-3">
+                                    <div class="form-group">
+                                        <label for="area">Area/Unit</label>
+                                        <input class="form-control" name="area" id="area" type="number" value="{{inward.area}}"  />
+                                    </div>
+                                </div>
+
+
+                            <div class="col-md-3">
+                                    <div class="form-group">
+                                        <label for="cost">Cost/Unit</label>
+                                        <input class="form-control" name="cost" id="cost" step=0.01 type="number" placeholder="Enter Cost" value="{{inward.cost}}"/>
+                                    </div>
+                                </div>
+                            <div class="col-md-3">
+                                    <div class="form-group">
+                                        <label for="quantity">Quantity</label>
+                                        <input class="form-control" name="quantity" id="quantity" type="number" placeholder="Enter Quantity" value="{{inward.quantity}}" />
+                                    </div>
+                                </div>
+                            </div>
+                            <label for="vendor_id"><strong><big>Enter vendor details:</big></strong></label><br>
+
+                            <div class="form-row">
+                                <div class="col-md-3">
+                                    <div class="form-group">
+                                    <label for="vendor_id">Vendor Name</label>
+                                    <select id="vendor_id" class="form-control" name="vendor_id" oninput="getVendorDetails()" value ="{{inward.vendor_id}}">
+                                        <option selected value="">Choose</option>
+                                        {% if vendors|length > 0 %}
+                                        {% for vendor in vendors%}
+                                        <option value="{{vendor.vendor_id}}">{{vendor.vendor_id}}</option>
+                                        {% endfor %}
+                                        {% endif %}
+                                    </select>
+                                </div>
+                                    </div>
+                                <div class="col-md-3">
+                                    <div class="form-group">
+                                    <label for="vendor_address">Vender Address</label>
+                                        <input class="form-control" name="vendor_address" id="vendor_address" type="text" value="{{inward.vendor_address}}" />
+
+                                </div>
+                            </div>
+                            <div class="col-md-3">
+                                   <div class="form-group">
+
+                                    <label for="vendor_phn">Phone Number</label>
+                                        <input class="form-control" name="vendor_phn" id="vendor_phn" type="number" value="{{inward.vendor_phn}}"/>
+
+                                </div>
+                            </div>
+                            </div>
+                            <label for="operationperson_id"><strong><big>Enter Operations Person Details:</big></strong></label><br>
+
+                            <div class="form-row">
+                                <div class="col-md-3">
+                                    <div class="form-group">
+                                    <label for="operationperson_id">Operations Person</label>
+                                    <select id="operationperson_id" class="form-control" name="operationperson_id" oninput="getOperationPersonDetails()" value="{{inward.operationperson_id}" >
+
+                                        <option selected value="">Choose</option>
+                                        {% if persons|length > 0 %}
+                                        {% for person in persons%}
+                                        <option value="{{person.operationperson_id}}">{{person.operationperson_id}}</option>
+                                        {% endfor %}
+                                        {% endif %}
+                                    </select>
+                                </div>
+                                    </div>
+                                <div class="col-md-3">
+                                    <div class="form-group">
+                                    <label for="operationperson_phn">Phone Number</label>
+                                        <input class="form-control" name="operationperson_phn" id="operationperson_phn" type="number" value="{{inward.operationperson_phn}}" />
+
+                                </div>
+                            </div>
+                            </div>
+                            <label for="location_id"><strong><big>Enter location details:</big></strong></label><br>
+
+                            <div class="form-row">
+                                <div class="col-md-3">
+                                    <div class="form-group">
+                                    <label for="location_id">Location</label>
+                                    <select id="location_id" class="form-control" name="location_id" oninput="getLocationdetails() value="{{inward.location_id}}>
+                                         <option selected value="">Choose</option>
+
+                                        {% if locations|length > 0 %}
+                                        {% for location in locations%}
+                                        <option value="{{location.location_id}}">{{location.location_id}}</option>
+                                        {% endfor %}
+                                        {% endif %}
+                                    </select>
+                                </div>
+                                    </div>
+                                                                <div class="col-md-3">
+                                    <div class="form-group">
+                                    <label for="location_area">Area in sqft</label>
+                                        <input class="form-control" name="location_area" id="location_area" type="number" value="{{inward.location_area}}" />
+
+                                </div>
+                            </div>
+                                </div>
+
+                            <div class="form-group mt-4 mb-0">
+                                <input type="submit" class="btn btn-primary btn-block" value="Update" class="btn btn-primary">
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+</main>
+{% endblock %}

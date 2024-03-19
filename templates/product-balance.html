@@ -1,0 +1,176 @@
+{% extends 'base.html' %}
+{% block title %}
+<title>Inventory Management App</title>
+{% endblock %}
+{% block content %}
+    <div class="container-fluid">
+        <br>
+                    <h1>Initial Added Material quantities</h1>
+
+        <br>
+
+        <div class="card mb-4">
+<div class="card-header">Dashboard</div>
+<div class="card-body">
+<div class="row">
+  <div class="col-md-8" >
+    <form method="post">
+      <label for="start_date">Start date:</label>
+      <input type="date" id="start_date" name="start_date">
+      <label for="end_date">End date:</label>
+      <input type="date" id="end_date" name="end_date">
+      <input type="submit" value="Filter">
+        <a href="{{ url_for('download_pivot_csv') }}" class="btn btn-primary">Download</a>
+    </form>
+  </div>
+</div>
+        <div class="search-container">
+      <div class="form-group">
+          <br>
+        <input type="text" class="form-control" id="searchInput" placeholder="Search">
+      </div>
+    </div>
+  </div>
+</div>
+        <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
+<div class="row">
+  <div class="col-5 card-black mb-3">
+    {% if table_html %}
+
+    <table class="table table-striped table-bordered table-hover">
+      {{ table_html | safe }}
+    </table>
+    {% else %}
+  <p>No data available.</p>
+{% endif %}
+  </div>
+</div>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/5.1.3/css/bootstrap.min.css" integrity="sha512-YR6U5v6z5hr6YGMp6aLcEK3qMZ3oOg9ny+nnMC8J1utupivpCJgjOwIKFNO8/+JW+OvOTsyBr4Jt4aGtQShWtQ==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css">
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.4/jquery.min.js"></script>
+  <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js"></script>
+<script src='https://kit.fontawesome.com/a076d05399.js' crossorigin='anonymous'></script>
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+    .table-row {
+      display: flex;
+      flex-wrap: wrap;
+    }
+    .table-container {
+      display: flex;
+      margin: 5px;
+      overflow-x: auto;
+      position: relative;
+    }
+    table, th, td {
+      border: 1px solid black;
+      border-collapse: collapse;
+      padding: 6px;
+    }
+    tr:nth-child(even){background-color: #f2f2f2}
+    td {
+      text-align: center;
+    }
+    th {
+      background-color: #337ab7;
+      color: white;
+      position: sticky;
+      top: 0;
+      z-index: 1;
+    }
+.card {
+  position: relative;
+}
+.card-header {
+  position: relative;
+}
+.card-header i {
+  top: 0;
+  right: 0;
+  font-size: 20px;
+  margin-right: 15px; /* Add some margin to separate the icon from the text */
+}
+.card h3,
+.card span {
+  display: inline-block;
+   /* Set the text elements to display as inline-block to allow the icon to appear on the same line */
+}
+</style>
+	<!-- Include Bootstrap JS and jQuery -->
+	<script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+	<script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.1/dist/umd/popper.min.js"></script>
+	<script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js"></script>
+    <script src=https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.5.0/Chart.min.js></script>
+   <script>
+$(document).ready(function() {
+  // Get the table rows
+  var rows = $('table tbody tr');
+
+  // Add event listener for search input
+  $('#searchInput').on('input', function() {
+    var searchTerm = $(this).val().toLowerCase();
+
+    // Filter rows based on search input
+    rows.each(function() {
+      var rowMatches = false;
+      $(this).find('td').each(function() {
+        var cellText = $(this).text().toLowerCase();
+        if (cellText.includes(searchTerm)) {
+          rowMatches = true;
+          return false; // exit the loop if a match is found
+        }
+      });
+      if (rowMatches) {
+        $(this).show();
+      } else {
+        $(this).hide();
+      }
+    });
+  });
+});
+
+</script>
+<script>
+var oilCanvas = document.getElementById("oilChart");
+Chart.defaults.global.defaultFontFamily = "Lato";
+Chart.defaults.global.defaultFontSize = 18;
+
+var oilData = {
+  labels: [
+    "Available Quantity",
+    "Used Quantity",
+  ],
+  datasets: [
+    {
+      data: [{{ rounded_quantity }}, {{ rounded_quantity1 }}],
+      backgroundColor: [
+        "#138991",
+        "pink",
+      ]
+    }
+  ]
+};
+
+var pieChart = new Chart(oilCanvas, {
+  type: 'pie',
+  data: oilData,
+  options: {
+    tooltips: {
+      callbacks: {
+        label: function(tooltipItem, data) {
+          var dataset = data.datasets[tooltipItem.datasetIndex];
+          var label = data.labels[tooltipItem.index];
+          var value = dataset.data[tooltipItem.index];
+          return label + ': ' + value + '%';
+        }
+      }
+    }
+  }
+});
+</script>
+
+
+
+{% endblock %}
